@@ -57,6 +57,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "controller"
+version = "0.1.0"
+dependencies = [
+ "as-slice",
+ "cortex-m 0.6.2",
+ "cortex-m-rt",
+ "cortex-m-rtic",
+ "cortex-m-semihosting",
+ "embedded-hal",
+ "nb",
+ "panic-semihosting",
+ "smart-leds 0.3.0",
+ "stm32f103xx",
+ "stm32f1xx-hal 0.6.0",
+]
+
+[[package]]
 name = "cortex-m"
 version = "0.5.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -97,6 +114,32 @@ checksum = "4717562afbba06e760d34451919f5c3bf3ac15c7bb897e8b04862a7428378647"
 dependencies = [
  "proc-macro2",
  "quote",
+ "syn",
+]
+
+[[package]]
+name = "cortex-m-rtfm"
+version = "0.5.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4fc65a600a5c8baf0a5fd3b2c0223b8d8fc7aa7d6d0c9a3350ce40a4da49ccea"
+dependencies = [
+ "cortex-m 0.6.2",
+ "cortex-m-rt",
+ "cortex-m-rtfm-macros",
+ "heapless",
+ "rtfm-core",
+ "version_check",
+]
+
+[[package]]
+name = "cortex-m-rtfm-macros"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fa4a3fc88fff9970152a7f79bf6919d538395bc1f11ba90a1e6970a3521d8b88"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "rtfm-syntax",
  "syn",
 ]
 
@@ -146,21 +189,102 @@ dependencies = [
 ]
 
 [[package]]
-name = "flash"
+name = "embrio"
 version = "0.1.0"
+source = "git+https://github.com/Nemo157/embrio-rs#42592bd017e20ac77b10d802e3abc57e15e4a569"
 dependencies = [
- "as-slice",
- "cortex-m 0.6.2",
- "cortex-m-rt",
- "cortex-m-rtic",
- "cortex-m-semihosting",
- "embedded-hal",
- "nb",
- "panic-semihosting",
- "smart-leds 0.3.0",
- "stm32f103xx",
- "stm32f1xx-hal 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "ws2812_spi_dma",
+ "embrio-core",
+ "embrio-util",
+]
+
+[[package]]
+name = "embrio-core"
+version = "0.1.0"
+source = "git+https://github.com/Nemo157/embrio-rs#42592bd017e20ac77b10d802e3abc57e15e4a569"
+dependencies = [
+ "futures-core",
+]
+
+[[package]]
+name = "embrio-util"
+version = "0.1.0"
+source = "git+https://github.com/Nemo157/embrio-rs#42592bd017e20ac77b10d802e3abc57e15e4a569"
+dependencies = [
+ "embrio-core",
+ "futures-core",
+ "futures-util",
+ "memchr",
+]
+
+[[package]]
+name = "futures"
+version = "0.3.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1e05b85ec287aac0dc34db7d4a569323df697f9c55b99b15d6b4ef8cde49f613"
+dependencies = [
+ "futures-channel",
+ "futures-core",
+ "futures-io",
+ "futures-sink",
+ "futures-task",
+ "futures-util",
+]
+
+[[package]]
+name = "futures-channel"
+version = "0.3.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f366ad74c28cca6ba456d95e6422883cfb4b252a83bed929c83abfdbbf2967d5"
+dependencies = [
+ "futures-core",
+ "futures-sink",
+]
+
+[[package]]
+name = "futures-core"
+version = "0.3.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "59f5fff90fd5d971f936ad674802482ba441b6f09ba5e15fd8b39145582ca399"
+
+[[package]]
+name = "futures-intrusive"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bc1529d07bd55fa54fc6c2d8460f621cfde0ae3fd2b96b2fa7eb4883478e1703"
+dependencies = [
+ "futures-core",
+ "lock_api",
+]
+
+[[package]]
+name = "futures-io"
+version = "0.3.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "de27142b013a8e869c14957e6d2edeef89e97c289e69d042ee3a49acd8b51789"
+
+[[package]]
+name = "futures-sink"
+version = "0.3.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3f2032893cb734c7a05d85ce0cc8b8c4075278e93b24b66f9de99d6eb0fa8acc"
+
+[[package]]
+name = "futures-task"
+version = "0.3.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bdb66b5f09e22019b1ab0830f7785bcea8e7a42148683f99214f73f8ec21a626"
+
+[[package]]
+name = "futures-util"
+version = "0.3.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8764574ff08b701a084482c3c7031349104b07ac897393010494beaa18ce32c6"
+dependencies = [
+ "futures-core",
+ "futures-sink",
+ "futures-task",
+ "pin-project",
+ "pin-utils",
 ]
 
 [[package]]
@@ -212,6 +336,39 @@ dependencies = [
 ]
 
 [[package]]
+name = "lights"
+version = "0.1.0"
+dependencies = [
+ "as-slice",
+ "cortex-m 0.6.2",
+ "cortex-m-rt",
+ "cortex-m-rtic",
+ "cortex-m-semihosting",
+ "embedded-hal",
+ "nb",
+ "panic-semihosting",
+ "smart-leds 0.3.0",
+ "stm32f103xx",
+ "stm32f1xx-hal 0.6.0",
+ "ws2812_spi_dma",
+]
+
+[[package]]
+name = "lock_api"
+version = "0.3.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c4da24a77a3d8a6d4862d95f72e6fdb9c09a643ecdb402d754004a557f2bec75"
+dependencies = [
+ "scopeguard",
+]
+
+[[package]]
+name = "memchr"
+version = "2.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3728d817d99e5ac407411fa471ff9800a778d88a24685968b36824eaf4bee400"
+
+[[package]]
 name = "nb"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -226,6 +383,32 @@ dependencies = [
  "cortex-m 0.6.2",
  "cortex-m-semihosting",
 ]
+
+[[package]]
+name = "pin-project"
+version = "0.4.22"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "12e3a6cdbfe94a5e4572812a0201f8c0ed98c1c452c7b8563ce2276988ef9c17"
+dependencies = [
+ "pin-project-internal",
+]
+
+[[package]]
+name = "pin-project-internal"
+version = "0.4.22"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6a0ffd45cf79d88737d7cc85bfd5d2894bee1139b356e616fe85dc389c61aaf7"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "pin-utils"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 
 [[package]]
 name = "proc-macro2"
@@ -258,6 +441,23 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6714061b32e0b0527005d5874c28a57d905559fecfacd361462ad0b01e701996"
 
 [[package]]
+name = "rtfm-core"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ec893edb2aa5b70320b94896ffea22a7ebb1cf3f942bb67cd5b60a865a63493"
+
+[[package]]
+name = "rtfm-syntax"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4455e23c34df3d66454e7e218a4d76a7f83321d04a806be614463341cec4116e"
+dependencies = [
+ "indexmap",
+ "proc-macro2",
+ "syn",
+]
+
+[[package]]
 name = "rtic-core"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -284,6 +484,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "scopeguard"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d29ab0c6d3fc0ee92fe66e2d99f700eab17a8d57d1c1d3b748380fb20baa78cd"
+
+[[package]]
 name = "semver"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -297,6 +503,25 @@ name = "semver-parser"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "388a1df253eca08550bef6c72392cfe7c30914bf41df5269b68cbd6ff8f570a3"
+
+[[package]]
+name = "shared"
+version = "0.1.0"
+dependencies = [
+ "as-slice",
+ "cortex-m 0.6.2",
+ "cortex-m-rt",
+ "cortex-m-rtic",
+ "cortex-m-semihosting",
+ "embedded-hal",
+ "nb",
+ "panic-semihosting",
+ "smart-leds 0.3.0",
+ "stm32f103xx",
+ "stm32f1xx-futures",
+ "stm32f1xx-hal 0.6.0",
+ "ws2812_spi_dma",
+]
 
 [[package]]
 name = "smart-leds"
@@ -331,6 +556,29 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dba1a27d3efae4351c8051072d619e3ade2820635c3958d826bfea39d59b54c8"
 
 [[package]]
+name = "stm32-usbd"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "70d13eca735cae37df697f599777b000cc0ee924df8452f2b4bfaa6798ab0338"
+dependencies = [
+ "cortex-m 0.6.2",
+ "usb-device",
+ "vcell",
+]
+
+[[package]]
+name = "stm32f1"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "22ce629123831891663402861bdc7140ebfd6a34a464329f9b9ec1cfde72055a"
+dependencies = [
+ "bare-metal",
+ "cortex-m 0.6.2",
+ "cortex-m-rt",
+ "vcell",
+]
+
+[[package]]
 name = "stm32f1"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -354,8 +602,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "stm32f1xx-futures"
+version = "0.1.0"
+dependencies = [
+ "cortex-m 0.6.2",
+ "cortex-m-rtfm",
+ "embedded-hal",
+ "embrio",
+ "futures",
+ "futures-intrusive",
+ "futures-util",
+ "nb",
+ "stm32f1xx-hal 0.5.3",
+ "void",
+]
+
+[[package]]
 name = "stm32f1xx-hal"
-version = "0.6.0"
+version = "0.5.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "455bf444813cdc2498130626c5d0ca42f91de1e8261751f3bdc6e5ad9e2aa128"
 dependencies = [
  "as-slice",
  "cast",
@@ -363,7 +629,8 @@ dependencies = [
  "cortex-m-rt",
  "embedded-hal",
  "nb",
- "stm32f1",
+ "stm32-usbd",
+ "stm32f1 0.9.0",
  "void",
 ]
 
@@ -379,7 +646,7 @@ dependencies = [
  "cortex-m-rt",
  "embedded-hal",
  "nb",
- "stm32f1",
+ "stm32f1 0.11.0",
  "void",
 ]
 
@@ -405,6 +672,12 @@ name = "unicode-xid"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "826e7639553986605ec5979c7dd957c7895e93eabed50ab2ffa7f6128a75097c"
+
+[[package]]
+name = "usb-device"
+version = "0.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0e5e2b9ba23f0d9ef7a34e498b6581c9d67944a1916542bfc7238bf1dc0d6acd"
 
 [[package]]
 name = "vcell"

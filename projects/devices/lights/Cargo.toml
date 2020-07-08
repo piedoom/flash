@@ -1,0 +1,21 @@
+[package]
+name = "lights"
+version = "0.1.0"
+authors = ["doomy"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+stm32f1xx-hal = { version = "0.6.0", features = ["rt", "stm32f103" ] }
+cortex-m = "0.6.1"
+stm32f103xx = "0.11.0"
+cortex-m-rt = { version = "0.6.8", features = ["device"] }
+panic-semihosting = "0.5.2"
+cortex-m-semihosting    = "0.3"
+smart-leds = {git = "https://github.com/smart-leds-rs/smart-leds"}
+cortex-m-rtic = "0.5"
+embedded-hal = "0.2.3"
+nb = "0.1.2"
+as-slice = "0.1"
+ws2812_spi_dma = { path = "../../../../ws2812-spi-dma" } # git = "https://gitlab.com/TheZoq2/ws2812-spi-dma"}

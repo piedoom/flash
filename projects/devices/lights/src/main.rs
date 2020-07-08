@@ -7,7 +7,7 @@ extern crate stm32f1xx_hal as hal;
 use cortex_m::singleton;
 use rtic::app;
 use stm32f1xx_hal::prelude::*;
-use rtic::cyccnt::{Instant, U32Ext as _};
+use rtic::cyccnt::{U32Ext as _};
 use cortex_m_semihosting::hprintln;
 use hal::{
     dma::{dma1::C3, TxDma},
@@ -50,7 +50,7 @@ const APP: () = {
     }
 
     #[init(schedule = [exe])]
-    fn init(mut cx: init::Context) -> init::LateResources {
+    fn init(cx: init::Context) -> init::LateResources {
         let mut core = cx.core;
         // Initialize (enable) the monotonic timer (CYCCNT)
         core.DWT.enable_cycle_counter();
@@ -79,7 +79,7 @@ const APP: () = {
             polarity: Polarity::IdleLow,
             phase: Phase::CaptureOnFirstTransition,
         };
-        let mut spi = Spi::spi1(
+        let spi = Spi::spi1(
             cx.device.SPI1,
             pins,
             &mut mapr,
@@ -188,11 +188,4 @@ fn wheel(mut wheel_pos: u8) -> RGB8 {
     }
     wheel_pos -= 170;
     (wheel_pos * 3, 255 - wheel_pos * 3, 0).into()
-}
-
-
-mod test {
-    fn test() {
-
-    }
 }
