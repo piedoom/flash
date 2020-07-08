@@ -1,0 +1,3 @@
+[submodule "stm32f1xx-futures"]
+	path = stm32f1xx-futures
+	url = https://gitlab.com/polymer-kb/firmware/stm32f1xx-futures.git

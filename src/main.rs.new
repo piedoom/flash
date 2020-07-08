@@ -1,0 +1,132 @@
+#![no_main]
+#![no_std]
+
+extern crate panic_semihosting;
+extern crate stm32f1xx_hal as hal;
+
+use cortex_m::singleton;
+use rtic::app;
+use stm32f1xx_hal::prelude::*;
+
+#[macro_use]
+pub mod rgb;
+use rgb::Ws2812Driver;
+use cortex_m_semihosting::hprintln;
+use hal::{
+    dma::{dma1::C3, TxDma},
+    gpio::{gpioa, gpioa::*},
+    spi::{Mode, Phase, Polarity, Spi},
+    time::MegaHertz,
+};
+
+use smart_leds::RGB8;
+
+const LED_COUNT: usize = 51;
+const SYS_CLK: MegaHertz = MegaHertz(48);
+const PCLK1: MegaHertz = MegaHertz(24);
+spi_bit_container!(LedBitContainer, LED_COUNT);
+
+#[app(device = stm32f1xx_hal::pac, peripherals = true, monotonic = rtic::cyccnt::CYCCNT)]
+const APP: () = {
+    struct Resources {
+        lights: Ws2812Driver,
+    }
+
+    #[init(schedule = [exe])]
+    fn init(mut cx: init::Context) -> init::LateResources {
+        let mut core = cx.core;
+        // Initialize (enable) the monotonic timer (CYCCNT)
+        core.DWT.enable_cycle_counter();
+        hprintln!("init @ {:?}", cx.start).unwrap();
+
+        // Cortex-M peripherals
+        let mut rcc = cx.device.RCC.constrain();
+        let mut flash = cx.device.FLASH.constrain();
+        let mut mapr = cx.device.AFIO.constrain(&mut rcc.apb2).mapr;
+        let clocks = rcc
+            .cfgr
+            .sysclk(SYS_CLK)
+            .pclk1(PCLK1)
+            .freeze(&mut flash.acr);
+
+        hprintln!("Initialising Ws2812 LEDs").unwrap();
+
+        // Set up pins for SPI and create SPI interface
+        let mut gpioa = cx.device.GPIOA.split(&mut rcc.apb2);
+        let pins = (
+            gpioa.pa5.into_alternate_push_pull(&mut gpioa.crl),
+            gpioa.pa6.into_floating_input(&mut gpioa.crl),
+            gpioa.pa7.into_alternate_push_pull(&mut gpioa.crl),
+        );
+        let spi_mode = Mode {
+            polarity: Polarity::IdleLow,
+            phase: Phase::CaptureOnFirstTransition,
+        };
+        let mut spi = Spi::spi1(
+            cx.device.SPI1,
+            pins,
+            &mut mapr,
+            spi_mode,
+            3.mhz(),
+            clocks,
+            &mut rcc.apb2,
+        );
+
+        let dma = cx.device.DMA1.split(&mut rcc.ahb);
+        let spi_dma = spi.with_tx_dma(dma.3);
+        let lights = Ws2812Driver::new(spi_dma);
+
+        cx.schedule.exe(cx.start).unwrap();
+
+        init::LateResources {
+            lights: lights,
+        }
+    }
+
+    #[task(schedule = [exe], resources = [lights])]
+    fn exe(mut cx: exe::Context) {
+        // let mut res: &mut SpiDma = cx.resources.spi_dma;
+
+        // let leds: &'static mut LedBitContainer = singleton!(: LedBitContainer = LedBitContainer::new()).unwrap();
+        // let color = [RGB8::new(255,0,0); LED_COUNT];
+        // led_spi_bit_pattern(&color, &mut leds.data);
+        // let dma = cx.resources.spi_dma;
+        let transfer = dma.write(leds);
+        // let (leds, spi_dma) = transfer.wait();
+        // cx.resources.spi_dma = &mut spi_dma;
+        // cx.schedule.exe(cx.scheduled + 16_000_000.cycles()).unwrap();
+    }
+
+    extern "C" {
+        fn EXTI0();
+    }
+};
+
+fn led_spi_bit_pattern(leds: &[RGB8; LED_COUNT], mut output: &mut [u8]) {
+    // Set all LEDS to 0
+    for i in 0..output.len() {
+        output[i] = 0;
+    }
+    for led in leds.iter() {
+        set_from_byte(led.g, output);
+        output = &mut output[8..];
+        set_from_byte(led.r, output);
+        output = &mut output[8..];
+        set_from_byte(led.b, output);
+        output = &mut output[8..];
+    }
+}
+
+fn set_from_byte(byte: u8, mut target: &mut [u8]) {
+    for i in 0..8 {
+        set_spi_byte(byte << i & 0x70 == 0x70, target);
+        target = &mut target[1..]
+    }
+}
+
+fn set_spi_byte(value: bool, target: &mut [u8]) {
+    target[0] = match value {
+        false => 0b10000000,
+        true => 0b11110000,
+    };
+}
