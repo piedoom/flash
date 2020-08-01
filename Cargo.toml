@@ -3,5 +3,7 @@
 members = [
     "projects/devices/controller",
     "projects/devices/lights",
-    "projects/shared"
+    "projects/etc/rx",
+    "projects/etc/tx",
+    "projects/shared",
 ]

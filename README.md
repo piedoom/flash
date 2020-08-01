@@ -5,7 +5,7 @@ This repo contains several projects
 ### Libraries
 - `shared` (`./projects/shared`)
 
-### Applciations
+### Applications
 - `controller` (`./projects/devices/controller`)
 - `lights` (`./projects/devices/lights`)
 
